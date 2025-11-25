@@ -1,4 +1,14 @@
 rootProject.name = 'CasinoDog'
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
+def nativeModulesFile = file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+if (nativeModulesFile.exists()) {
+    apply from: nativeModulesFile
+    applyNativeModulesSettingsGradle(settings)
+}
+
 include ':app'
-includeBuild('../node_modules/react-native-gradle-plugin')
+
+def reactNativeGradlePlugin = file("../node_modules/react-native-gradle-plugin")
+if (reactNativeGradlePlugin.exists()) {
+    includeBuild(reactNativeGradlePlugin)
+}
