@@ -45,12 +45,31 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x android/gradlew
 
-      - name: Build release APK
+      - name: Print Java & Gradle info
+        run: |
+          echo "===== java -version ====="
+          java -version || true
+          echo "===== javac -version ====="
+          javac -version || true
+          echo "===== Gradle wrapper version ====="
+          cd android
+          ./gradlew --version || true
+
+      - name: Build release APK (with stacktrace, save output)
         run: |
           cd android
-          ./gradlew assembleRelease
+          # capture full output to a file for upload/inspection
+          ./gradlew assembleRelease --no-daemon --stacktrace --info 2>&1 | tee ../build-gradle-full.log
+        continue-on-error: true
 
-      - name: Upload APK artifact
+      - name: Upload Gradle build log
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-build-log
+          path: mobile-app/build-gradle-full.log
+
+      - name: Upload APK artifact (if produced)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: CasinoDog-APK
