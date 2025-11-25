@@ -7,9 +7,14 @@ pluginManagement {
 }
 
 plugins {
-    id("com.facebook.react") version "0.73.0" apply false
+    // React Native Gradle plugin — must match RN version in package.json
+    id("com.facebook.react") version "0.72.6" apply false
+
+    // Android build plugins
     id("com.android.application") version "8.0.2" apply false
     id("com.android.library") version "8.0.2" apply false
+
+    // Kotlin plugin
     id("org.jetbrains.kotlin.android") version "1.9.10" apply false
 }
 
