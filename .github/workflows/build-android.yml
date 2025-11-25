@@ -40,7 +40,7 @@ jobs:
           java-version: '17'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
+        uses: android-actions/setup-android@v3
 
       - name: Install dependencies
         working-directory: ./mobile-app
@@ -77,7 +77,7 @@ jobs:
 
       - name: Upload Debug APK
         if: github.event.inputs.release_type == 'debug' || github.event.inputs.release_type == ''
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: casinodog-debug-apk
           path: mobile-app/android/app/build/outputs/apk/debug/app-debug.apk
@@ -85,7 +85,7 @@ jobs:
 
       - name: Upload Release APK
         if: github.event.inputs.release_type == 'release'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: casinodog-release-apk
           path: mobile-app/android/app/build/outputs/apk/release/app-release.apk
