@@ -1,4 +1,53 @@
-- name: Create GitHub Release (Mobile APK)
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: "Type of release"
+        required: true
+        default: "build"
+        type: string
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Make Gradle executable
+        run: chmod +x android/gradlew
+
+      - name: Build release APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CasinoDog-APK
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Create GitHub Release
         if: ${{ github.event.inputs.release_type == 'release' && github.ref == 'refs/heads/main' }}
         uses: softprops/action-gh-release@v1
         with:
@@ -6,8 +55,7 @@
           name: CasinoDog Mobile v${{ github.run_number }}
           draft: false
           prerelease: false
-          files: |
-            mobile-app/android/app/build/outputs/apk/release/app-release.apk
+          files: android/app/build/outputs/apk/release/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -20,5 +68,5 @@
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '✅ Android APK built successfully! Download it from the artifacts section.'
+              body: "✅ CasinoDog APK built successfully! Download it from the Actions artifacts."
             })
