@@ -26,7 +26,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: Restore Gradle wrapper if missing
+  run: |
+    if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+      gradle wrapper --gradle-version 7.6.3
+    fi
+  working-directory: ./mobile-app/android    
+
+  - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
